@@ -134,37 +134,24 @@ angular.module('ion-google-place', [])
                     }
 
                     ngModel.$formatters.push(function(modelValue) {
-                        if (!modelValue) {
-                            return '';
-                        }
-                        return modelValue.formatted_address;
+                        return modelValue || {};
                     });
 
                     ngModel.$parsers.push(function (viewValue) {
-                        return {
-                            formatted_address: viewValue
-                        };
+                        return viewValue || {};
                     });
-                    
-                    ngModel.$render = function(){
-                        if(!ngModel.$viewValue){
-                            element.val('');
-                        } else {
-                            element.val(ngModel.$viewValue.formatted_address || '');
-                        }
-                    };
 
+                    ngModel.$render = function() {
+                        element.val(ngModel.$viewValue.formatted_address || '');
+                    };
+                    
                     scope.$on("$destroy", function(){
                         if (unbindBackButtonAction){
                             unbindBackButtonAction();
                             unbindBackButtonAction = null;
                         }
                     });                                                          
-
-                    ngModel.$render = function() {
-                        element.val(ngModel.$viewValue || '');
-                    };
-
+                    
                     scope.$watch('ngModel.formatted_address', function (newVal, oldVal) {
                         ngModel.$setViewValue(newVal);
                         ngModel.$render();
