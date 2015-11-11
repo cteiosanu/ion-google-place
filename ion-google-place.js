@@ -55,19 +55,20 @@ angular.module('ion-google-place', [])
                     popupPromise.then(function(el){
                         var searchInputElement = angular.element(el.element.find('input'));
 
-                        scope.selectLocation = function(location){
+                        scope.selectLocation = function (location) {
                             scope.location = location;
-                            scope.$apply();
-                            
-                            ngModel.$setViewValue(location.formatted_address);
-                            ngModel.$render();
-                            el.element.css('display', 'none');
-                            $ionicBackdrop.release();
-
-                            if (unbindBackButtonAction) {
-                                unbindBackButtonAction();
-                                unbindBackButtonAction = null;
-                            }
+    
+                            $timeout(function () {
+                                ngModel.$setViewValue(location.formatted_address);
+                                ngModel.$render();
+                                el.element.css('display', 'none');
+                                $ionicBackdrop.release();
+    
+                                if (unbindBackButtonAction) {
+                                    unbindBackButtonAction();
+                                    unbindBackButtonAction = null;
+                                }
+                            });
                         };
 
                         scope.$watch('searchQuery', function(query){
