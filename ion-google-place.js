@@ -15,6 +15,7 @@ angular.module('ion-google-place', [])
                 replace: true,
                 scope: {
                     ngModel: '=?',
+                    location: '=',
                     geocodeOptions: '='
                 },
                 link: function(scope, element, attrs, ngModel) {
@@ -55,7 +56,10 @@ angular.module('ion-google-place', [])
                         var searchInputElement = angular.element(el.element.find('input'));
 
                         scope.selectLocation = function(location){
-                            ngModel.$setViewValue(location);
+                            scope.location = location;
+                            scope.$apply();
+                            
+                            ngModel.$setViewValue(location.formatted_address);
                             ngModel.$render();
                             el.element.css('display', 'none');
                             $ionicBackdrop.release();
@@ -111,7 +115,7 @@ angular.module('ion-google-place', [])
                             }
                         };
 
-                        closeOnBackButton = function(e){
+                        var closeOnBackButton = function(e){
                             e.preventDefault();
 
                             el.element.css('display', 'none');
@@ -133,16 +137,8 @@ angular.module('ion-google-place', [])
                         element.attr('placeholder', attrs.placeholder);
                     }
 
-                    ngModel.$formatters.push(function(modelValue) {
-                        return modelValue || {};
-                    });
-
-                    ngModel.$parsers.push(function (viewValue) {
-                        return viewValue || {};
-                    });
-
                     ngModel.$render = function() {
-                        element.val(ngModel.$viewValue.formatted_address || '');
+                        element.val(ngModel.$viewValue || '');
                     };
                     
                     scope.$on("$destroy", function(){
@@ -150,11 +146,6 @@ angular.module('ion-google-place', [])
                             unbindBackButtonAction();
                             unbindBackButtonAction = null;
                         }
-                    });                                                          
-                    
-                    scope.$watch('ngModel.formatted_address', function (newVal, oldVal) {
-                        ngModel.$setViewValue(newVal);
-                        ngModel.$render();
                     });
                 }
             };
